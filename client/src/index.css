@@ -40,75 +40,57 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
+  
+  /* Japanese Seasons Color Palette */
+  --color-spring-pink: oklch(0.85 0.1 350);
+  --color-spring-green: oklch(0.8 0.1 150);
+  --color-summer-blue: oklch(0.75 0.1 220);
+  --color-summer-gold: oklch(0.85 0.15 85);
+  --color-autumn-orange: oklch(0.7 0.15 40);
+  --color-autumn-brown: oklch(0.6 0.1 60);
+  --color-winter-white: oklch(0.98 0.01 0);
+  --color-winter-blue: oklch(0.4 0.1 250);
+  
+  /* Custom fonts */
+  --font-sans: "Noto Sans JP", sans-serif;
+  --font-serif: "Noto Serif JP", serif;
+  --font-display: "Zen Maru Gothic", sans-serif;
 }
 
 :root {
   --radius: 0.75rem;
-  /* Dark theme as default - Data Dashboard Elegance */
-  --background: oklch(0.13 0.02 270);
-  --foreground: oklch(0.95 0.01 270);
-  --card: oklch(0.18 0.025 270);
-  --card-foreground: oklch(0.95 0.01 270);
-  --popover: oklch(0.18 0.025 270);
-  --popover-foreground: oklch(0.95 0.01 270);
-  --primary: oklch(0.65 0.2 265);
-  --primary-foreground: oklch(0.98 0.01 270);
-  --secondary: oklch(0.55 0.2 300);
-  --secondary-foreground: oklch(0.98 0.01 270);
-  --muted: oklch(0.25 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.7 0.18 165);
-  --accent-foreground: oklch(0.15 0.02 165);
+  --background: oklch(0.99 0.005 80);
+  --foreground: oklch(0.2 0.02 60);
+  --card: oklch(1 0 0 / 80%);
+  --card-foreground: oklch(0.2 0.02 60);
+  --popover: oklch(0.99 0.005 80);
+  --popover-foreground: oklch(0.2 0.02 60);
+  --primary: oklch(0.65 0.15 350);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --secondary: oklch(0.95 0.02 150);
+  --secondary-foreground: oklch(0.3 0.05 150);
+  --muted: oklch(0.95 0.01 80);
+  --muted-foreground: oklch(0.5 0.02 60);
+  --accent: oklch(0.9 0.08 350);
+  --accent-foreground: oklch(0.3 0.1 350);
   --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 270);
-  --border: oklch(0.3 0.03 270);
-  --input: oklch(0.25 0.02 270);
-  --ring: oklch(0.65 0.2 265);
-  --chart-1: oklch(0.65 0.2 265);
-  --chart-2: oklch(0.55 0.2 300);
-  --chart-3: oklch(0.7 0.18 165);
-  --chart-4: oklch(0.75 0.15 85);
-  --chart-5: oklch(0.6 0.2 25);
-  --sidebar: oklch(0.15 0.02 270);
-  --sidebar-foreground: oklch(0.95 0.01 270);
-  --sidebar-accent: oklch(0.25 0.03 270);
-  --sidebar-accent-foreground: oklch(0.95 0.01 270);
-  --sidebar-border: oklch(0.3 0.03 270);
-  --sidebar-ring: oklch(0.65 0.2 265);
-}
-
-.dark {
-  --background: oklch(0.13 0.02 270);
-  --foreground: oklch(0.95 0.01 270);
-  --card: oklch(0.18 0.025 270);
-  --card-foreground: oklch(0.95 0.01 270);
-  --popover: oklch(0.18 0.025 270);
-  --popover-foreground: oklch(0.95 0.01 270);
-  --primary: oklch(0.65 0.2 265);
-  --primary-foreground: oklch(0.98 0.01 270);
-  --secondary: oklch(0.55 0.2 300);
-  --secondary-foreground: oklch(0.98 0.01 270);
-  --muted: oklch(0.25 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.7 0.18 165);
-  --accent-foreground: oklch(0.15 0.02 165);
-  --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 270);
-  --border: oklch(0.3 0.03 270);
-  --input: oklch(0.25 0.02 270);
-  --ring: oklch(0.65 0.2 265);
-  --chart-1: oklch(0.65 0.2 265);
-  --chart-2: oklch(0.55 0.2 300);
-  --chart-3: oklch(0.7 0.18 165);
-  --chart-4: oklch(0.75 0.15 85);
-  --chart-5: oklch(0.6 0.2 25);
-  --sidebar: oklch(0.15 0.02 270);
-  --sidebar-foreground: oklch(0.95 0.01 270);
-  --sidebar-accent: oklch(0.25 0.03 270);
-  --sidebar-accent-foreground: oklch(0.95 0.01 270);
-  --sidebar-border: oklch(0.3 0.03 270);
-  --sidebar-ring: oklch(0.65 0.2 265);
+  --destructive-foreground: oklch(0.98 0.01 0);
+  --border: oklch(0.9 0.02 80);
+  --input: oklch(0.92 0.02 80);
+  --ring: oklch(0.65 0.15 350);
+  --chart-1: oklch(0.75 0.12 350);
+  --chart-2: oklch(0.7 0.1 220);
+  --chart-3: oklch(0.7 0.15 40);
+  --chart-4: oklch(0.5 0.1 250);
+  --chart-5: oklch(0.6 0.1 150);
+  --sidebar: oklch(0.98 0.005 80);
+  --sidebar-foreground: oklch(0.2 0.02 60);
+  --sidebar-primary: oklch(0.65 0.15 350);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+  --sidebar-accent: oklch(0.95 0.05 350);
+  --sidebar-accent-foreground: oklch(0.3 0.1 350);
+  --sidebar-border: oklch(0.9 0.02 80);
+  --sidebar-ring: oklch(0.65 0.15 350);
 }
 
 @layer base {
@@ -117,7 +99,10 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -160,83 +145,92 @@
       max-width: 1280px;
     }
   }
-
+  
+  /* Season-specific backgrounds */
+  .bg-spring {
+    background: linear-gradient(135deg, oklch(0.95 0.08 350) 0%, oklch(0.92 0.06 150) 100%);
+  }
+  
+  .bg-summer {
+    background: linear-gradient(135deg, oklch(0.85 0.08 220) 0%, oklch(0.9 0.1 85) 100%);
+  }
+  
+  .bg-autumn {
+    background: linear-gradient(135deg, oklch(0.8 0.12 40) 0%, oklch(0.75 0.08 60) 100%);
+  }
+  
+  .bg-winter {
+    background: linear-gradient(135deg, oklch(0.95 0.02 250) 0%, oklch(0.85 0.05 220) 100%);
+  }
+  
   /* Glass morphism card */
   .glass-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: oklch(1 0 0 / 70%);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
+    border: 1px solid oklch(1 0 0 / 30%);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 10%);
   }
-
-  .glass-card-hover {
+  
+  /* Season indicator */
+  .season-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
     transition: all 0.3s ease;
   }
-
-  .glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  
+  .season-indicator.spring {
+    background: oklch(0.75 0.12 350);
+    box-shadow: 0 0 8px oklch(0.75 0.12 350 / 50%);
   }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #4361EE 0%, #7209B7 50%, #06D6A0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  
+  .season-indicator.summer {
+    background: oklch(0.7 0.1 220);
+    box-shadow: 0 0 8px oklch(0.7 0.1 220 / 50%);
   }
-
-  /* Gradient border */
-  .gradient-border {
-    position: relative;
-    background: oklch(0.18 0.025 270);
-    border-radius: 1rem;
+  
+  .season-indicator.autumn {
+    background: oklch(0.7 0.15 40);
+    box-shadow: 0 0 8px oklch(0.7 0.15 40 / 50%);
   }
-
-  .gradient-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: 1rem;
-    background: linear-gradient(135deg, #4361EE, #7209B7, #06D6A0);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+  
+  .season-indicator.winter {
+    background: oklch(0.5 0.1 250);
+    box-shadow: 0 0 8px oklch(0.5 0.1 250 / 50%);
   }
-
-  /* Glow effect */
-  .glow-primary {
-    box-shadow: 0 0 30px rgba(67, 97, 238, 0.3);
+  
+  /* Scroll snap for sections */
+  .scroll-snap-container {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 100vh;
   }
-
-  .glow-secondary {
-    box-shadow: 0 0 30px rgba(114, 9, 183, 0.3);
-  }
-
-  .glow-accent {
-    box-shadow: 0 0 30px rgba(6, 214, 160, 0.3);
+  
+  .scroll-snap-section {
+    scroll-snap-align: start;
+    min-height: 100vh;
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: oklch(0.15 0.02 270);
+  background: oklch(0.95 0.01 80);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0.03 270);
+  background: oklch(0.7 0.08 350);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.45 0.03 270);
+  background: oklch(0.6 0.1 350);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
