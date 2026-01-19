@@ -4,6 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -40,75 +42,90 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.75rem;
-  /* Dark theme as default - Data Dashboard Elegance */
+  /* Dark theme colors - Roblox gaming aesthetic */
   --background: oklch(0.13 0.02 270);
   --foreground: oklch(0.95 0.01 270);
-  --card: oklch(0.18 0.025 270);
+  --card: oklch(0.18 0.02 270);
   --card-foreground: oklch(0.95 0.01 270);
-  --popover: oklch(0.18 0.025 270);
+  --popover: oklch(0.18 0.02 270);
   --popover-foreground: oklch(0.95 0.01 270);
-  --primary: oklch(0.65 0.2 265);
-  --primary-foreground: oklch(0.98 0.01 270);
-  --secondary: oklch(0.55 0.2 300);
-  --secondary-foreground: oklch(0.98 0.01 270);
-  --muted: oklch(0.25 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.7 0.18 165);
-  --accent-foreground: oklch(0.15 0.02 165);
+  --primary: oklch(0.75 0.18 195);
+  --primary-foreground: oklch(0.13 0.02 270);
+  --secondary: oklch(0.25 0.03 270);
+  --secondary-foreground: oklch(0.9 0.01 270);
+  --muted: oklch(0.22 0.02 270);
+  --muted-foreground: oklch(0.65 0.02 270);
+  --accent: oklch(0.7 0.2 330);
+  --accent-foreground: oklch(0.95 0.01 270);
   --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 270);
-  --border: oklch(0.3 0.03 270);
+  --destructive-foreground: oklch(0.95 0.01 270);
+  --border: oklch(0.3 0.02 270);
   --input: oklch(0.25 0.02 270);
-  --ring: oklch(0.65 0.2 265);
-  --chart-1: oklch(0.65 0.2 265);
-  --chart-2: oklch(0.55 0.2 300);
-  --chart-3: oklch(0.7 0.18 165);
-  --chart-4: oklch(0.75 0.15 85);
-  --chart-5: oklch(0.6 0.2 25);
+  --ring: oklch(0.75 0.18 195);
+  /* Chart colors - vibrant gaming palette */
+  --chart-1: oklch(0.75 0.18 195);
+  --chart-2: oklch(0.7 0.2 330);
+  --chart-3: oklch(0.8 0.2 140);
+  --chart-4: oklch(0.75 0.15 60);
+  --chart-5: oklch(0.7 0.18 280);
+  /* Sidebar */
   --sidebar: oklch(0.15 0.02 270);
-  --sidebar-foreground: oklch(0.95 0.01 270);
-  --sidebar-accent: oklch(0.25 0.03 270);
-  --sidebar-accent-foreground: oklch(0.95 0.01 270);
-  --sidebar-border: oklch(0.3 0.03 270);
-  --sidebar-ring: oklch(0.65 0.2 265);
+  --sidebar-foreground: oklch(0.9 0.01 270);
+  --sidebar-primary: oklch(0.75 0.18 195);
+  --sidebar-primary-foreground: oklch(0.13 0.02 270);
+  --sidebar-accent: oklch(0.22 0.02 270);
+  --sidebar-accent-foreground: oklch(0.9 0.01 270);
+  --sidebar-border: oklch(0.3 0.02 270);
+  --sidebar-ring: oklch(0.75 0.18 195);
 }
 
-.dark {
-  --background: oklch(0.13 0.02 270);
-  --foreground: oklch(0.95 0.01 270);
-  --card: oklch(0.18 0.025 270);
-  --card-foreground: oklch(0.95 0.01 270);
-  --popover: oklch(0.18 0.025 270);
-  --popover-foreground: oklch(0.95 0.01 270);
-  --primary: oklch(0.65 0.2 265);
-  --primary-foreground: oklch(0.98 0.01 270);
-  --secondary: oklch(0.55 0.2 300);
-  --secondary-foreground: oklch(0.98 0.01 270);
-  --muted: oklch(0.25 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.7 0.18 165);
-  --accent-foreground: oklch(0.15 0.02 165);
-  --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 270);
-  --border: oklch(0.3 0.03 270);
-  --input: oklch(0.25 0.02 270);
-  --ring: oklch(0.65 0.2 265);
-  --chart-1: oklch(0.65 0.2 265);
-  --chart-2: oklch(0.55 0.2 300);
-  --chart-3: oklch(0.7 0.18 165);
-  --chart-4: oklch(0.75 0.15 85);
-  --chart-5: oklch(0.6 0.2 25);
-  --sidebar: oklch(0.15 0.02 270);
-  --sidebar-foreground: oklch(0.95 0.01 270);
-  --sidebar-accent: oklch(0.25 0.03 270);
-  --sidebar-accent-foreground: oklch(0.95 0.01 270);
-  --sidebar-border: oklch(0.3 0.03 270);
-  --sidebar-ring: oklch(0.65 0.2 265);
+/* Custom utility classes for gaming aesthetic */
+.glow-cyan {
+  box-shadow: 0 0 20px oklch(0.75 0.18 195 / 0.5);
+}
+
+.glow-magenta {
+  box-shadow: 0 0 20px oklch(0.7 0.2 330 / 0.5);
+}
+
+.glow-lime {
+  box-shadow: 0 0 20px oklch(0.8 0.2 140 / 0.5);
+}
+
+.glass {
+  background: oklch(1 0 0 / 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(1 0 0 / 0.1);
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, oklch(0.18 0.02 270), oklch(0.22 0.02 270));
+  border-radius: var(--radius);
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, oklch(0.75 0.18 195), oklch(0.7 0.2 330));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, oklch(0.75 0.18 195), oklch(0.7 0.2 330));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @layer base {
@@ -117,7 +134,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -160,83 +177,31 @@
       max-width: 1280px;
     }
   }
+}
 
-  /* Glass morphism card */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
+/* Animation keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px oklch(0.75 0.18 195 / 0.3);
   }
-
-  .glass-card-hover {
-    transition: all 0.3s ease;
-  }
-
-  .glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #4361EE 0%, #7209B7 50%, #06D6A0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Gradient border */
-  .gradient-border {
-    position: relative;
-    background: oklch(0.18 0.025 270);
-    border-radius: 1rem;
-  }
-
-  .gradient-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: 1rem;
-    background: linear-gradient(135deg, #4361EE, #7209B7, #06D6A0);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-
-  /* Glow effect */
-  .glow-primary {
-    box-shadow: 0 0 30px rgba(67, 97, 238, 0.3);
-  }
-
-  .glow-secondary {
-    box-shadow: 0 0 30px rgba(114, 9, 183, 0.3);
-  }
-
-  .glow-accent {
-    box-shadow: 0 0 30px rgba(6, 214, 160, 0.3);
+  50% {
+    box-shadow: 0 0 40px oklch(0.75 0.18 195 / 0.6);
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: oklch(0.15 0.02 270);
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0.03 270);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.45 0.03 270);
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }

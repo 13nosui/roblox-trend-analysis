@@ -1,6 +1,6 @@
 /**
  * Game Ideas - 新規ゲームアイデア提案セクション
- * Design: カード形式のアイデア提案 + 詳細モーダル
+ * Design: Dark mode with glassmorphism, interactive cards
  */
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -22,9 +22,8 @@ const gameIdeas = [
     id: 1,
     title: "AIペット育成 & クラフトサバイバル",
     subtitle: "AI × ペット × サバイバル",
-    image: "/images/game-idea-1.png",
     icon: Bot,
-    color: "from-cyan-500 to-teal-500",
+    color: "cyan",
     description: "プレイヤーがAIを搭載したユニークなペットを育て、一緒に未知の島を探検しながら、クラフト要素を駆使して生き残る協力型サバイバルゲーム。",
     targetAudience: "10歳〜18歳の男女、ペット育成・サバイバル・クラフトゲームのファン",
     keyMechanics: [
@@ -45,9 +44,8 @@ const gameIdeas = [
     id: 2,
     title: "ミームカルチャー x ソーシャル推理",
     subtitle: "Brainrot × 人狼 × パーティー",
-    image: "/images/game-idea-2.png",
     icon: Users,
-    color: "from-purple-500 to-pink-500",
+    color: "magenta",
     description: "「Brainrot」などの最新インターネットミームをテーマにした、人狼風のソーシャル推理ゲーム。プレイヤーは「ミーム感染者」と「一般市民」に分かれ、議論と投票で勝敗を決める。",
     targetAudience: "Z世代・α世代（10代前半〜20代前半）、ミームやSNSトレンドに敏感な層",
     keyMechanics: [
@@ -68,9 +66,8 @@ const gameIdeas = [
     id: 3,
     title: "放置型 x 日本文化シミュレーション",
     subtitle: "放置系 × 日本 × 癒し",
-    image: "/images/game-idea-3.png",
     icon: Leaf,
-    color: "from-green-500 to-emerald-500",
+    color: "lime",
     description: "日本の美しい田舎や昔ながらの商店街を舞台にした、癒し系の放置型シミュレーションゲーム。神社の巫女、ラーメン屋の店主、和菓子屋の職人などになり、自分のお店や村を発展させる。",
     targetAudience: "全年齢層、特に癒しやスローライフを求めるプレイヤー、日本文化やアニメ風ビジュアルが好きな層",
     keyMechanics: [
@@ -89,196 +86,218 @@ const gameIdeas = [
   }
 ];
 
+const getColorClasses = (color: string) => {
+  switch (color) {
+    case "cyan":
+      return {
+        bg: "bg-[oklch(0.75_0.18_195_/_0.1)]",
+        text: "text-[oklch(0.75_0.18_195)]",
+        gradient: "from-[oklch(0.75_0.18_195)] to-[oklch(0.65_0.18_210)]",
+        glow: "hover:shadow-[0_0_30px_oklch(0.75_0.18_195_/_0.3)]"
+      };
+    case "magenta":
+      return {
+        bg: "bg-[oklch(0.7_0.2_330_/_0.1)]",
+        text: "text-[oklch(0.7_0.2_330)]",
+        gradient: "from-[oklch(0.7_0.2_330)] to-[oklch(0.6_0.2_345)]",
+        glow: "hover:shadow-[0_0_30px_oklch(0.7_0.2_330_/_0.3)]"
+      };
+    case "lime":
+      return {
+        bg: "bg-[oklch(0.8_0.2_140_/_0.1)]",
+        text: "text-[oklch(0.8_0.2_140)]",
+        gradient: "from-[oklch(0.8_0.2_140)] to-[oklch(0.7_0.2_155)]",
+        glow: "hover:shadow-[0_0_30px_oklch(0.8_0.2_140_/_0.3)]"
+      };
+    default:
+      return {
+        bg: "bg-white/10",
+        text: "text-white",
+        gradient: "from-white to-gray-300",
+        glow: ""
+      };
+  }
+};
+
 export default function GameIdeas() {
   const [selectedIdea, setSelectedIdea] = useState<typeof gameIdeas[0] | null>(null);
 
   return (
-    <div className="container px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-          <span className="gradient-text">新規ゲームアイデア</span>
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          市場分析に基づき、成功の可能性が高いと考えられる3つの新規ゲームアイデアを提案します。
-          各アイデアをクリックして詳細を確認できます。
-        </p>
-      </motion.div>
-
-      {/* Idea Cards */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        {gameIdeas.map((idea, index) => (
-          <motion.div
-            key={idea.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="glass-card glass-card-hover rounded-2xl overflow-hidden cursor-pointer group"
-            onClick={() => setSelectedIdea(idea)}
-          >
-            {/* Image */}
-            <div className="relative h-48 overflow-hidden">
-              <img 
-                src={idea.image} 
-                alt={idea.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-              
-              {/* Potential Score Badge */}
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-background/80 backdrop-blur-sm border border-border/50">
-                <div className="flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3 text-accent" />
-                  <span className="text-sm font-bold text-accent">{idea.potentialScore}%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${idea.color} flex items-center justify-center`}>
-                  <idea.icon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground">{idea.subtitle}</span>
-                </div>
-              </div>
-
-              <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
-                {idea.title}
-              </h3>
-
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                {idea.description}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
-                  対象: {idea.targetAudience.split("、")[0]}
-                </span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Detail Modal */}
-      {selectedIdea && (
+    <section id="ideas" className="py-24 relative">
+      {/* Background accent */}
+      <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[oklch(0.8_0.2_140_/_0.05)] rounded-full blur-3xl" />
+      
+      <div className="container relative z-10">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
-          onClick={() => setSelectedIdea(null)}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            className="glass-card rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="relative h-48 sm:h-64">
-              <img 
-                src={selectedIdea.image} 
-                alt={selectedIdea.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-              
-              <button
-                onClick={() => setSelectedIdea(null)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-4">
+            <Lightbulb className="w-4 h-4 text-[oklch(0.8_0.2_140)]" />
+            <span className="text-sm text-muted-foreground">ゲームアイデア</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">新規ゲーム提案</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            市場分析に基づき、成功の可能性が高いと考えられる3つの新規ゲームアイデア
+          </p>
+        </motion.div>
 
-              <div className="absolute bottom-4 left-6 right-6">
+        {/* Idea Cards */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          {gameIdeas.map((idea, index) => {
+            const colors = getColorClasses(idea.color);
+            return (
+              <motion.div
+                key={idea.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`glass rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 ${colors.glow}`}
+                onClick={() => setSelectedIdea(idea)}
+              >
+                {/* Header */}
+                <div className={`p-6 bg-gradient-to-br ${colors.gradient}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <idea.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm">
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3 text-white" />
+                        <span className="text-sm font-bold text-white">{idea.potentialScore}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-xs text-white/80">{idea.subtitle}</span>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="font-bold text-lg mb-2 group-hover:text-foreground transition-colors">
+                    {idea.title}
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    {idea.description}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      対象: {idea.targetAudience.split("、")[0]}
+                    </span>
+                    <ChevronRight className={`w-4 h-4 ${colors.text} group-hover:translate-x-1 transition-transform`} />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Detail Modal */}
+        {selectedIdea && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedIdea(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="glass rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className={`relative p-6 bg-gradient-to-br ${getColorClasses(selectedIdea.color).gradient}`}>
+                <button
+                  onClick={() => setSelectedIdea(null)}
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+
                 <div className="flex items-center gap-3 mb-2">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedIdea.color} flex items-center justify-center`}>
+                  <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                     <selectedIdea.icon className="w-6 h-6 text-white" />
                   </div>
-                  <div className="px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-medium">
+                  <div className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium">
                     成功可能性: {selectedIdea.potentialScore}%
                   </div>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold">{selectedIdea.title}</h3>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-6">
-              <div>
-                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-primary" />
-                  コンセプト
-                </h4>
-                <p className="text-muted-foreground leading-relaxed">
-                  {selectedIdea.description}
-                </p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-white">{selectedIdea.title}</h3>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Target className="w-4 h-4 text-secondary" />
-                  ターゲット層
-                </h4>
-                <p className="text-muted-foreground">
-                  {selectedIdea.targetAudience}
-                </p>
-              </div>
+              {/* Content */}
+              <div className="p-6 space-y-6">
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-[oklch(0.75_0.18_195)]" />
+                    コンセプト
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {selectedIdea.description}
+                  </p>
+                </div>
 
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-accent" />
-                  主要メカニクス
-                </h4>
-                <ul className="space-y-2">
-                  {selectedIdea.keyMechanics.map((mechanic, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                      {mechanic}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Target className="w-4 h-4 text-[oklch(0.7_0.2_330)]" />
+                    ターゲット層
+                  </h4>
+                  <p className="text-muted-foreground">
+                    {selectedIdea.targetAudience}
+                  </p>
+                </div>
 
-              <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20">
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-accent" />
-                  成功の可能性（根拠）
-                </h4>
-                <ul className="space-y-2">
-                  {selectedIdea.successFactors.map((factor, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <CheckCircle className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                      {factor}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <div>
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-[oklch(0.8_0.2_140)]" />
+                    主要メカニクス
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedIdea.keyMechanics.map((mechanic, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[oklch(0.8_0.2_140)] mt-2 flex-shrink-0" />
+                        {mechanic}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <div className="flex justify-end">
-                <Button
-                  onClick={() => setSelectedIdea(null)}
-                  className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-                >
-                  閉じる
-                </Button>
+                <div className="p-4 rounded-xl bg-gradient-to-r from-[oklch(0.75_0.18_195_/_0.1)] to-[oklch(0.8_0.2_140_/_0.1)] border border-white/10">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[oklch(0.8_0.2_140)]" />
+                    成功の可能性（根拠）
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedIdea.successFactors.map((factor, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <CheckCircle className="w-4 h-4 text-[oklch(0.8_0.2_140)] mt-0.5 flex-shrink-0" />
+                        {factor}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => setSelectedIdea(null)}
+                    className="bg-[oklch(0.75_0.18_195)] hover:bg-[oklch(0.7_0.18_195)] text-[oklch(0.13_0.02_270)]"
+                  >
+                    閉じる
+                  </Button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 }
