@@ -8,6 +8,7 @@ import HeroSection from "@/components/HeroSection";
 import MarketOverview from "@/components/MarketOverview";
 import GenreAnalysis from "@/components/GenreAnalysis";
 import TrendChart from "@/components/TrendChart";
+import NewsMarketSection from "@/components/NewsMarketSection";
 import GameIdeas from "@/components/GameIdeas";
 import SuccessFactors from "@/components/SuccessFactors";
 import Footer from "@/components/Footer";
@@ -28,6 +29,7 @@ export default function Home() {
             <a href="#overview" className="hover:text-foreground transition-colors">市場概要</a>
             <a href="#genres" className="hover:text-foreground transition-colors">ジャンル分析</a>
             <a href="#trends" className="hover:text-foreground transition-colors">トレンド</a>
+            <a href="#news-market" className="hover:text-foreground transition-colors">ニュース</a>
             <a href="#ideas" className="hover:text-foreground transition-colors">ゲームアイデア</a>
             <a href="#success" className="hover:text-foreground transition-colors">成功要因</a>
           </div>
@@ -40,6 +42,7 @@ export default function Home() {
         <MarketOverview />
         <GenreAnalysis />
         <TrendChart />
+        <NewsMarketSection />
         <GameIdeas />
         <SuccessFactors />
       </main>
