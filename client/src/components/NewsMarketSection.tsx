@@ -1,10 +1,10 @@
 /**
  * News & Market Section Component
  * Design: Data Dashboard Elegance - Dark mode with glassmorphism
- * Features: Real-time stock data via Yahoo Finance API, latest news, investor insights
+ * Features: Real-time stock data via Yahoo Finance API, latest news, investor insights, stock chart
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   TrendingUp, 
@@ -18,12 +18,22 @@ import {
   Globe,
   Sparkles,
   RefreshCw,
-  Loader2
+  Loader2,
+  ExternalLink
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  AreaChart
+} from "recharts";
 
-// Latest news
+// Latest news with source URLs
 const latestNews = [
   {
     id: 1,
@@ -32,6 +42,7 @@ const latestNews = [
     summary: "Robloxは2026年1月7日より、チャット機能の利用に顔年齢確認を必須化。ゲーム業界初の取り組みとして、未成年者保護を強化。",
     date: "2026年1月7日",
     source: "Roblox公式",
+    sourceUrl: "https://corp.roblox.com/newsroom",
     icon: Shield,
     color: "from-emerald-500 to-teal-500"
   },
@@ -42,6 +53,7 @@ const latestNews = [
     summary: "新しい広告フォーマットとツールを発表。次世代向けの必須チャネルとしての地位確立を目指す。",
     date: "2026年1月6日",
     source: "Roblox公式",
+    sourceUrl: "https://corp.roblox.com/newsroom",
     icon: Building2,
     color: "from-blue-500 to-cyan-500"
   },
@@ -52,6 +64,7 @@ const latestNews = [
     summary: "新しいAI技術により、クリエイターがより高品質な体験を構築し、スマートなNPCを作成できるように。",
     date: "2026年1月12日",
     source: "Roblox公式",
+    sourceUrl: "https://corp.roblox.com/newsroom",
     icon: Sparkles,
     color: "from-purple-500 to-pink-500"
   },
@@ -62,6 +75,7 @@ const latestNews = [
     summary: "Roblox開発ツールを活用した実践型ゲーム制作ワークショップを日本で開催。プログラミング教育の新たな取り組み。",
     date: "2025年12月19日",
     source: "電通グループ",
+    sourceUrl: "https://www.group.dentsu.com/jp/",
     icon: Globe,
     color: "from-orange-500 to-red-500"
   }
@@ -103,25 +117,28 @@ const investorInsights = [
   }
 ];
 
-// Official announcements
+// Official announcements with source URLs
 const officialAnnouncements = [
   {
     title: "2026年の方針",
     content: "より頻繁なアップデートを約束。製品アップデート、クリエイターニュース、コミュニティアップデート、ポリシー変更を定期的に発信。",
     speaker: "David Baszucki (CEO)",
-    date: "2026年1月"
+    date: "2026年1月",
+    sourceUrl: "https://corp.roblox.com/newsroom"
   },
   {
     title: "クリエイター経済の成長",
     content: "2025年1〜9月のクリエイター支払い総額が10億ドルを突破。トップ開発者の平均収益は3,850万ドル。開発者交換レートを8.5%引き上げ。",
     speaker: "Roblox IR",
-    date: "2025年Q3"
+    date: "2025年Q3",
+    sourceUrl: "https://ir.roblox.com/"
   },
   {
     title: "ユーザー層の拡大",
     content: "13歳以上のユーザーがDAUの2/3を占め、年間89%成長。グローバルゲーム収益の3.2%を獲得（前年2.3%から上昇）。",
     speaker: "Roblox IR",
-    date: "2025年Q3"
+    date: "2025年Q3",
+    sourceUrl: "https://ir.roblox.com/"
   }
 ];
 
@@ -149,6 +166,21 @@ function formatVolume(num: number | undefined): string {
   return num.toString();
 }
 
+// Custom tooltip for stock chart
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass rounded-lg p-3 border border-white/20">
+        <p className="text-xs text-muted-foreground mb-1">{label}</p>
+        <p className="text-sm font-semibold text-[oklch(0.75_0.18_195)]">
+          ${payload[0].value?.toFixed(2)}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function NewsMarketSection() {
   const [activeTab, setActiveTab] = useState("news");
   
@@ -161,9 +193,26 @@ export default function NewsMarketSection() {
     }
   );
 
+  // Fetch historical stock data for chart (1 month)
+  const { data: historyData, isLoading: isHistoryLoading } = trpc.stock.getHistory.useQuery(
+    { symbol: "RBLX", range: "1mo", interval: "1d" },
+    {
+      refetchInterval: 300000, // Refetch every 5 minutes
+      staleTime: 60000,
+    }
+  );
+
   const handleRefresh = () => {
     refetch();
   };
+
+  // Transform history data for chart
+  const chartData = historyData?.data
+    ?.filter((d: any) => d.close !== null)
+    ?.map((d: any) => ({
+      date: new Date(d.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' }),
+      price: d.close,
+    })) || [];
 
   return (
     <section id="news-market" className="py-20 relative overflow-hidden">
@@ -278,15 +327,94 @@ export default function NewsMarketSection() {
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs text-emerald-400">リアルタイム更新中</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs text-muted-foreground">リアルタイム更新中</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   最終更新: {new Date(stockData.lastUpdated).toLocaleString('ja-JP')}
-                </p>
+                </span>
               </div>
             </>
           ) : null}
+        </motion.div>
+
+        {/* Stock Price Chart (1 Month) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass rounded-2xl p-6 border border-white/10 mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-1">株価推移（過去1ヶ月）</h3>
+              <p className="text-sm text-muted-foreground">RBLX 日次終値</p>
+            </div>
+            {chartData.length > 0 && (
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">期間変動</p>
+                {(() => {
+                  const firstPrice = chartData[0]?.price || 0;
+                  const lastPrice = chartData[chartData.length - 1]?.price || 0;
+                  const change = lastPrice - firstPrice;
+                  const changePercent = firstPrice > 0 ? (change / firstPrice) * 100 : 0;
+                  const isPositive = change >= 0;
+                  return (
+                    <p className={`font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {isPositive ? '+' : ''}{change.toFixed(2)} ({isPositive ? '+' : ''}{changePercent.toFixed(2)}%)
+                    </p>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+          
+          {isHistoryLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-[oklch(0.75_0.18_195)]" />
+              <span className="ml-3 text-muted-foreground">チャートデータを取得中...</span>
+            </div>
+          ) : chartData.length > 0 ? (
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="oklch(0.75 0.18 195)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="oklch(0.75 0.18 195)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="rgba(255,255,255,0.5)"
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                    tickLine={{ stroke: 'rgba(255,255,255,0.2)' }}
+                  />
+                  <YAxis 
+                    stroke="rgba(255,255,255,0.5)"
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                    tickLine={{ stroke: 'rgba(255,255,255,0.2)' }}
+                    domain={['dataMin - 5', 'dataMax + 5']}
+                    tickFormatter={(value) => `$${value}`}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="price" 
+                    stroke="oklch(0.75 0.18 195)" 
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorPrice)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-16 text-muted-foreground">
+              チャートデータがありません
+            </div>
+          )}
         </motion.div>
 
         {/* Financial Metrics */}
@@ -330,13 +458,16 @@ export default function NewsMarketSection() {
           <TabsContent value="news">
             <div className="grid md:grid-cols-2 gap-4">
               {latestNews.map((news, index) => (
-                <motion.div
+                <motion.a
                   key={news.id}
+                  href={news.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="glass rounded-xl p-5 border border-white/10 hover:border-white/20 transition-all group"
+                  className="glass rounded-xl p-5 border border-white/10 hover:border-[oklch(0.75_0.18_195)]/50 transition-all group cursor-pointer block"
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${news.color} flex items-center justify-center shrink-0`}>
@@ -349,18 +480,20 @@ export default function NewsMarketSection() {
                         </span>
                         <span className="text-xs text-muted-foreground">{news.date}</span>
                       </div>
-                      <h3 className="font-semibold mb-2 group-hover:text-[oklch(0.75_0.18_195)] transition-colors">
+                      <h3 className="font-semibold mb-2 group-hover:text-[oklch(0.75_0.18_195)] transition-colors flex items-center gap-2">
                         {news.title}
+                        <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </h3>
                       <p className="text-sm text-muted-foreground line-clamp-2">
                         {news.summary}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                         出典: {news.source}
+                        <ExternalLink className="w-3 h-3" />
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </motion.a>
               ))}
             </div>
           </TabsContent>
@@ -414,15 +547,21 @@ export default function NewsMarketSection() {
           <TabsContent value="official">
             <div className="space-y-4">
               {officialAnnouncements.map((announcement, index) => (
-                <motion.div
+                <motion.a
                   key={announcement.title}
+                  href={announcement.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="glass rounded-xl p-5 border border-white/10"
+                  className="glass rounded-xl p-5 border border-white/10 hover:border-[oklch(0.75_0.18_195)]/50 transition-all group cursor-pointer block"
                 >
-                  <h3 className="font-semibold text-[oklch(0.75_0.18_195)] mb-2">{announcement.title}</h3>
+                  <h3 className="font-semibold text-[oklch(0.75_0.18_195)] mb-2 flex items-center gap-2">
+                    {announcement.title}
+                    <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </h3>
                   <p className="text-sm text-muted-foreground mb-3">{announcement.content}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
@@ -433,8 +572,12 @@ export default function NewsMarketSection() {
                       <Calendar className="w-3 h-3" />
                       {announcement.date}
                     </span>
+                    <span className="flex items-center gap-1 ml-auto">
+                      ソースを見る
+                      <ExternalLink className="w-3 h-3" />
+                    </span>
                   </div>
-                </motion.div>
+                </motion.a>
               ))}
             </div>
           </TabsContent>
@@ -448,7 +591,9 @@ export default function NewsMarketSection() {
           className="mt-8 text-center"
         >
           <p className="text-xs text-muted-foreground">
-            データソース: Yahoo Finance API（リアルタイム株価）、Roblox IR、Roblox Newsroom
+            データソース: Yahoo Finance API（リアルタイム株価）、
+            <a href="https://ir.roblox.com/" target="_blank" rel="noopener noreferrer" className="text-[oklch(0.75_0.18_195)] hover:underline">Roblox IR</a>、
+            <a href="https://corp.roblox.com/newsroom" target="_blank" rel="noopener noreferrer" className="text-[oklch(0.75_0.18_195)] hover:underline">Roblox Newsroom</a>
           </p>
         </motion.div>
       </div>

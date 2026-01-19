@@ -131,7 +131,6 @@ export const appRouter = router({
               region: "US",
               interval: input.interval,
               range: input.range,
-              includeAdjustedClose: "true",
             },
           }) as StockChartResponse;
 
