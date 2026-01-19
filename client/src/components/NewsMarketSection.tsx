@@ -1,10 +1,10 @@
 /**
  * News & Market Section Component
  * Design: Data Dashboard Elegance - Dark mode with glassmorphism
- * Features: Latest news, stock info, investor insights, official announcements
+ * Features: Real-time stock data via Yahoo Finance API, latest news, investor insights
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   TrendingUp, 
@@ -13,27 +13,15 @@ import {
   DollarSign, 
   Users, 
   Shield,
-  ExternalLink,
   Calendar,
   Building2,
   Globe,
-  Sparkles
+  Sparkles,
+  RefreshCw,
+  Loader2
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Stock data
-const stockData = {
-  symbol: "RBLX",
-  price: 87.28,
-  change: 2.63,
-  changePercent: 3.11,
-  marketCap: "580億ドル",
-  targetPrice: 137.03,
-  analystRating: "Buy",
-  analystCount: 39,
-  upside: 55.94,
-  lastUpdated: "2026年1月16日"
-};
+import { trpc } from "@/lib/trpc";
 
 // Latest news
 const latestNews = [
@@ -115,14 +103,6 @@ const investorInsights = [
   }
 ];
 
-// Financial metrics
-const financialMetrics = [
-  { label: "DAU", value: "1.515億人", change: "+70%", isPositive: true },
-  { label: "Bookings", value: "$19億", change: "+70%", isPositive: true },
-  { label: "収益", value: "$14億", change: "+34%", isPositive: true },
-  { label: "エンゲージメント", value: "396億時間", change: "+23%", isPositive: true }
-];
-
 // Official announcements
 const officialAnnouncements = [
   {
@@ -145,8 +125,45 @@ const officialAnnouncements = [
   }
 ];
 
+// Financial metrics (static for now, could be fetched from API in future)
+const financialMetrics = [
+  { label: "DAU", value: "1.515億人", change: "+70%", isPositive: true },
+  { label: "Bookings", value: "$19億", change: "+70%", isPositive: true },
+  { label: "収益", value: "$14億", change: "+34%", isPositive: true },
+  { label: "エンゲージメント", value: "396億時間", change: "+23%", isPositive: true }
+];
+
+function formatNumber(num: number | undefined): string {
+  if (num === undefined) return "N/A";
+  if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
+  if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+  if (num >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
+  return `$${num.toFixed(2)}`;
+}
+
+function formatVolume(num: number | undefined): string {
+  if (num === undefined) return "N/A";
+  if (num >= 1e9) return `${(num / 1e9).toFixed(2)}B`;
+  if (num >= 1e6) return `${(num / 1e6).toFixed(2)}M`;
+  if (num >= 1e3) return `${(num / 1e3).toFixed(2)}K`;
+  return num.toString();
+}
+
 export default function NewsMarketSection() {
   const [activeTab, setActiveTab] = useState("news");
+  
+  // Fetch real-time stock data
+  const { data: stockData, isLoading, error, refetch, isFetching } = trpc.stock.getQuote.useQuery(
+    { symbol: "RBLX" },
+    {
+      refetchInterval: 60000, // Refetch every 60 seconds
+      staleTime: 30000, // Consider data stale after 30 seconds
+    }
+  );
+
+  const handleRefresh = () => {
+    refetch();
+  };
 
   return (
     <section id="news-market" className="py-20 relative overflow-hidden">
@@ -178,57 +195,98 @@ export default function NewsMarketSection() {
           </p>
         </motion.div>
 
-        {/* Stock Ticker */}
+        {/* Real-time Stock Ticker */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="glass rounded-2xl p-6 border border-white/10 mb-8"
         >
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[oklch(0.75_0.18_195)] to-[oklch(0.7_0.2_330)] flex items-center justify-center">
-                <DollarSign className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">NYSE:</span>
-                  <span className="font-bold text-lg">{stockData.symbol}</span>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin text-[oklch(0.75_0.18_195)]" />
+              <span className="ml-3 text-muted-foreground">株価データを取得中...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center py-8 text-red-400">
+              <span>株価データの取得に失敗しました</span>
+              <button 
+                onClick={handleRefresh}
+                className="ml-4 px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                再試行
+              </button>
+            </div>
+          ) : stockData ? (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[oklch(0.75_0.18_195)] to-[oklch(0.7_0.2_330)] flex items-center justify-center">
+                    <DollarSign className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">NYSE:</span>
+                      <span className="font-bold text-lg">{stockData.symbol}</span>
+                      <button 
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                        className="p-1 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50"
+                        title="株価を更新"
+                      >
+                        <RefreshCw className={`w-4 h-4 text-muted-foreground ${isFetching ? 'animate-spin' : ''}`} />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl font-bold">${stockData.currentPrice.toFixed(2)}</span>
+                      <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${stockData.priceChange >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {stockData.priceChange >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                        <span className="text-sm font-medium">
+                          {stockData.priceChange >= 0 ? '+' : ''}{stockData.priceChange.toFixed(2)} ({stockData.priceChangePercent.toFixed(2)}%)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold">${stockData.price}</span>
-                  <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${stockData.change >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-                    {stockData.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    <span className="text-sm font-medium">
-                      {stockData.change >= 0 ? '+' : ''}{stockData.change} ({stockData.changePercent}%)
-                    </span>
+
+                <div className="flex flex-wrap gap-6">
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">時価総額</p>
+                    <p className="font-semibold">{formatNumber(stockData.marketCap)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">本日高値</p>
+                    <p className="font-semibold text-emerald-400">${stockData.dayHigh.toFixed(2)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">本日安値</p>
+                    <p className="font-semibold text-red-400">${stockData.dayLow.toFixed(2)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">出来高</p>
+                    <p className="font-semibold">{formatVolume(stockData.volume)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">52週高値</p>
+                    <p className="font-semibold text-[oklch(0.75_0.18_195)]">${stockData.fiftyTwoWeekHigh.toFixed(2)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground mb-1">52週安値</p>
+                    <p className="font-semibold text-[oklch(0.7_0.2_330)]">${stockData.fiftyTwoWeekLow.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="flex flex-wrap gap-6">
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">時価総額</p>
-                <p className="font-semibold">{stockData.marketCap}</p>
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs text-emerald-400">リアルタイム更新中</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  最終更新: {new Date(stockData.lastUpdated).toLocaleString('ja-JP')}
+                </p>
               </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">目標株価</p>
-                <p className="font-semibold text-[oklch(0.75_0.18_195)]">${stockData.targetPrice}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">アナリスト評価</p>
-                <p className="font-semibold text-emerald-400">{stockData.analystRating}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">上昇余地</p>
-                <p className="font-semibold text-[oklch(0.7_0.2_330)]">+{stockData.upside}%</p>
-              </div>
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-4 text-right">
-            最終更新: {stockData.lastUpdated}
-          </p>
+            </>
+          ) : null}
         </motion.div>
 
         {/* Financial Metrics */}
@@ -312,18 +370,18 @@ export default function NewsMarketSection() {
             <div className="space-y-4">
               {investorInsights.map((insight, index) => (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  key={insight.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   className="glass rounded-xl p-5 border border-white/10"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-semibold">{insight.name}</h3>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${insight.isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${insight.isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                           {insight.action}
                         </span>
                       </div>
@@ -339,11 +397,11 @@ export default function NewsMarketSection() {
                         </span>
                       </div>
                     </div>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${insight.isPositive ? 'bg-emerald-500/20' : 'bg-amber-500/20'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${insight.isPositive ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}>
                       {insight.isPositive ? (
                         <TrendingUp className="w-5 h-5 text-emerald-400" />
                       ) : (
-                        <TrendingDown className="w-5 h-5 text-amber-400" />
+                        <TrendingDown className="w-5 h-5 text-red-400" />
                       )}
                     </div>
                   </div>
@@ -357,17 +415,15 @@ export default function NewsMarketSection() {
             <div className="space-y-4">
               {officialAnnouncements.map((announcement, index) => (
                 <motion.div
-                  key={index}
+                  key={announcement.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   className="glass rounded-xl p-5 border border-white/10"
                 >
-                  <h3 className="font-semibold text-lg mb-2 text-[oklch(0.75_0.18_195)]">
-                    {announcement.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-3">{announcement.content}</p>
+                  <h3 className="font-semibold text-[oklch(0.75_0.18_195)] mb-2">{announcement.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-3">{announcement.content}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
@@ -386,38 +442,14 @@ export default function NewsMarketSection() {
 
         {/* Data Sources */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-8 text-center"
         >
-          <p className="text-xs text-muted-foreground mb-2">データソース</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a 
-              href="https://ir.roblox.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-[oklch(0.75_0.18_195)] transition-colors flex items-center gap-1"
-            >
-              Roblox IR <ExternalLink className="w-3 h-3" />
-            </a>
-            <a 
-              href="https://corp.roblox.com/newsroom" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-[oklch(0.75_0.18_195)] transition-colors flex items-center gap-1"
-            >
-              Roblox Newsroom <ExternalLink className="w-3 h-3" />
-            </a>
-            <a 
-              href="https://finance.yahoo.com/quote/RBLX" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-[oklch(0.75_0.18_195)] transition-colors flex items-center gap-1"
-            >
-              Yahoo Finance <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            データソース: Yahoo Finance API（リアルタイム株価）、Roblox IR、Roblox Newsroom
+          </p>
         </motion.div>
       </div>
     </section>
